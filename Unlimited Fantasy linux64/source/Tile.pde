@@ -86,7 +86,7 @@ class Tile {
     
     //Trees change color depending on their biome
     if(object.equals("Tree")) {
-      if(biome.equals("Snow")) {
+      if(biome.equals("Snow")||biome.equals("Taiga")) {
         fill(195,255,210);
         ellipse(x+w/2,y+w/2,w/2,h/2);
         noStroke();

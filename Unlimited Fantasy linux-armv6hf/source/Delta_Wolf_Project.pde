@@ -607,13 +607,34 @@ void randomMap() {
     System.out.println("Adding Biomes");
     
     map = addForests(map);
-    for(int i=0; i<2; i++){
-      map = processMap(map,"Forest","Grassland",5,50, false);
+    for(int i=0; i<3; i++){
+      map = processMap(map,"Forest","Grassland",3,24, false);
     }
+    
+    for(int i=0; i<3; i++){
+      map = processMap(map,"Grassland","Forest",3,24, false);
+    }
+    
     map = addSavannahs(map);
     for(int i=0; i<2; i++){
-      map = processMap(map,"Savannah","Grassland",5,50, false);
+      map = processMap(map,"Savannah","Grassland",4,36, false);
     }
+    
+    map = addTaiga(map);
+    for(int i=0; i<2; i++){
+      map = processMap(map,"Taiga","Grassland",4,36, false);
+    }
+    
+    map = addRockySoil(map);
+    for(int i=0; i<2; i++){
+      map = processMap(map,"Rocky Soil","Savannah",2,8, false);
+    }
+    
+    map = addSnow(map);
+    for(int i=0; i<2; i++){
+      map = processMap(map,"Snow","Taiga",4,34, false);
+    }
+    
     //addRockySoil(map,10);
     /*map = addRockySoil(map);
     for(int i=0; i<2; i++){
@@ -621,15 +642,17 @@ void randomMap() {
     }*/
     //addSnow(map,10);
     //map = addTaiga(map);
-    map = addTaiga(map);
+    /*map = addTaiga(map);
     for(int i=0; i<10; i++){
       map = processMap(map,"Taiga","Forest",8,110, false);
-    }
+    }*/
     
-    map = addSnow(map);
+    /*map = addSnow(map);
     for(int i=0; i<10; i++){
       map = processMap(map,"Snow","Taiga",8,110, false);
-    }
+    }*/
+    
+    
     //addSleet(map,10);
     
     //addTemperature(map);
@@ -653,8 +676,7 @@ void randomMap() {
   }
   
   else if(step == 5) {
-
-    /*
+    
     //Once the biomes are set, we create objects that spawn in them
     //For this, we use chance percentage out of the specified number(Mostly out of 200)
   
@@ -698,8 +720,19 @@ void randomMap() {
           }
         }
         
-        //Desert
-        if (map[x][y].getBiome().equals("Desert")) {
+        //Rocky Soil
+        if (map[x][y].getBiome().equals("Rocky Soil")) {
+          int chance = round(random(200));
+          if (chance <=6) {
+            map[x][y].setObject("Small Stone");
+          }
+          if (chance >=7&&chance<=10) {
+            map[x][y].setObject("Big Stone");
+          }
+        }
+        
+        //Beach
+        if (map[x][y].getBiome().equals("Beach")) {
           int chance = round(random(200));
           if (chance <=2) {
             map[x][y].setObject("Small Stone");
@@ -716,16 +749,13 @@ void randomMap() {
         }
         
         //Savanah
-        if (map[x][y].getBiome().equals("Savanah")) {
+        if (map[x][y].getBiome().equals("Savannah")) {
           int chance = round(random(200));
           if (chance <=10) {
             map[x][y].setObject("Long Grass");
           }
           if (chance >=11&&chance<=12) {
             map[x][y].setObject("Small Stone");
-          }
-          if (chance ==13) {
-            map[x][y].setObject("Big Stone");
           }
         }
         
@@ -750,7 +780,6 @@ void randomMap() {
         
       }
     }
-    */
     step++;
     
   }
@@ -993,7 +1022,7 @@ Tile[][] addSavannahs(Tile[][] oldMap){
   return newMap;
 }
 
-/*Tile[][] addRockySoil(Tile[][] oldMap){
+Tile[][] addRockySoil(Tile[][] oldMap){
   Tile[][] newMap = new Tile[cols][rows];
   
   for (int x = 0; x < cols; x++) {
@@ -1005,10 +1034,10 @@ Tile[][] addSavannahs(Tile[][] oldMap){
   //Loop over each row and column of the map
   for(int x=0; x<cols; x++){
     for(int y=0; y<rows; y++){
-      int nbs = countNeighbours(oldMap, "Forest", x, y, 10);
+      int nbs = countNeighbours(oldMap, "Savannah", x, y, 10);
       //The new value is based on our simulation rules
       //First, if a cell is alive but has too few neighbours, kill it.
-        if(oldMap[x][y].getBiome().equals("Forest")){
+        if(oldMap[x][y].getBiome().equals("Savannah")){
           if(nbs >50){
             newMap[x][y].setBiome("Rocky Soil");
           }
@@ -1025,14 +1054,14 @@ Tile[][] addSavannahs(Tile[][] oldMap){
         int random = round(random(100));
       
         if(random < 76) {
-          newMap[x][y].setBiome("Forest");
+          newMap[x][y].setBiome("Savannah");
         }
       
       }
     }
   }
   return newMap;
-}*/
+}
 
 Tile[][] addTaiga(Tile[][] oldMap){
   Tile[][] newMap = new Tile[cols][rows];
@@ -1046,10 +1075,10 @@ Tile[][] addTaiga(Tile[][] oldMap){
   //Loop over each row and column of the map
   for(int x=0; x<cols; x++){
     for(int y=0; y<rows; y++){
-      int nbs = countNeighbours(oldMap, "Forest", x, y, 10);
+      int nbs = countNeighbours(oldMap, "Grassland", x, y, 10);
       //The new value is based on our simulation rules
       //First, if a cell is alive but has too few neighbours, kill it.
-        if(oldMap[x][y].getBiome().equals("Forest")){
+        if(oldMap[x][y].getBiome().equals("Grassland")){
           if(nbs >50){
             newMap[x][y].setBiome("Taiga");
           }
@@ -1066,7 +1095,7 @@ Tile[][] addTaiga(Tile[][] oldMap){
         int random = round(random(100));
       
         if(random < 35) {
-          newMap[x][y].setBiome("Forest");
+          newMap[x][y].setBiome("Grassland");
         }
       
       }
