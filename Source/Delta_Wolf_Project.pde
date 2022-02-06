@@ -1,19 +1,3 @@
-import processing.core.*; 
-import processing.data.*; 
-import processing.event.*; 
-import processing.opengl.*; 
-
-import java.util.HashMap; 
-import java.util.ArrayList; 
-import java.io.File; 
-import java.io.BufferedReader; 
-import java.io.PrintWriter; 
-import java.io.InputStream; 
-import java.io.OutputStream; 
-import java.io.IOException; 
-
-public class Delta_Wolf_Project extends PApplet {
-
 /*
  Delta Wolf Project - Made with Processing 3.1 (https://processing.org/)
  ---------------------------------------------------
@@ -44,7 +28,7 @@ Boolean dropping = false; //Is the player dropping an object
 int fontSize = 18; //Size of the font
 String playerLog; //The In-Game Console's Current Message
 boolean mapOpened = false; //When true, displays the world map
-float inputDelay = 0.25f; //Slows down the speed of input to match human speed(not machine speed)
+float inputDelay = 0.25; //Slows down the speed of input to match human speed(not machine speed)
 
 //Save variables
 
@@ -60,14 +44,14 @@ float step = 0; //Used to aid the start up process
 
 //This is used for applying various settings such as fullScreen() before setup()
 //A neat trick could be loading in a config file which decides if it is full screen or not
-public void settings() {
+void settings() {
   //Remove the '//' below to make the game fullscreen, but just remember to add '//' just before size()
   //fullScreen();
   size(displayWidth/2+displayWidth/4,displayHeight/2+displayHeight/3);
 }
 
 //Runs once and at the very beginning of a program
-public void setup() {
+void setup() {
   
   //Sets the background color using the RGB format
   background(65, 60, 65);
@@ -91,7 +75,7 @@ public void setup() {
  It's mostly used for drawing/displaying objects onto the screen
  
  */
-public void draw() {
+void draw() {
   
   //If the game hasn't loaded
   if(!isRunning) {
@@ -207,7 +191,7 @@ public void draw() {
 }
 
 //Every time a button on the keyboard is pressed, this runs(loops at incredible speed if held down)
-public void keyPressed() {
+void keyPressed() {
 
   //To counter the super machine speed of keyPressed(), we need to delay the input speed
   
@@ -223,7 +207,7 @@ public void keyPressed() {
 
         //Interact with the tile adjacent to the player
         playerInteract(playerX, playerY-1);
-        inputDelay = 0.5f;
+        inputDelay = 0.5;
       }
     }
 
@@ -232,7 +216,7 @@ public void keyPressed() {
       if (playerY <= rows-2) {
 
         playerInteract(playerX, playerY+1);
-        inputDelay = 0.5f;
+        inputDelay = 0.5;
       }
     }
 
@@ -241,7 +225,7 @@ public void keyPressed() {
       if ( playerX >= 1) {
 
         playerInteract(playerX-1, playerY);
-        inputDelay = 0.5f;
+        inputDelay = 0.5;
       }
     }
 
@@ -250,7 +234,7 @@ public void keyPressed() {
       if ( playerX <= cols-2) {
 
         playerInteract(playerX+1, playerY);inputDelay = 1;
-        inputDelay = 0.5f;
+        inputDelay = 0.5;
       }
     }
 
@@ -356,7 +340,7 @@ public void keyPressed() {
 }
 
 //Handles all the player movement/object interaction
-public void playerInteract(int tileX, int tileY) {
+void playerInteract(int tileX, int tileY) {
 
   //If we are dropping an object
   if (dropping) {
@@ -455,7 +439,7 @@ public void playerInteract(int tileX, int tileY) {
 }
 
 //Creates a map of empty tiles
-public void createMap() {
+void createMap() {
   
   //Send a message to the log
   System.out.println(playerLog = "Creating The Map");
@@ -481,7 +465,7 @@ public void createMap() {
 }
 
 //Handles loading the save data/generating a new random map if there is no save
-public void loadSave() {
+void loadSave() {
   
   //Set data(String) to contain all the data in "/data/save.txt" if it exists
   data = loadStrings("data/save.txt");
@@ -565,7 +549,7 @@ public void loadSave() {
 }
 
 //Creates a randomly generated map
-public void randomMap() {
+void randomMap() {
   
   if(step == 2) {
   
@@ -623,53 +607,40 @@ public void randomMap() {
     System.out.println("Adding Biomes");
     
     map = addForests(map);
-    for(int i=0; i<3; i++){
-      map = processMap(map,"Forest","Grassland",3,24, false);
+    for(int i=0; i<2; i++){
+      map = processMap(map,"Forest","Grassland",5,50, false);
     }
-    
-    for(int i=0; i<3; i++){
-      map = processMap(map,"Grassland","Forest",3,24, false);
-    }
-    
     map = addSavannahs(map);
     for(int i=0; i<2; i++){
-      map = processMap(map,"Savannah","Grassland",4,36, false);
+      map = processMap(map,"Savannah","Grassland",5,50, false);
     }
-    
-    map = addTaiga(map);
-    for(int i=0; i<2; i++){
-      map = processMap(map,"Taiga","Grassland",4,36, false);
-    }
-    
+    //addRockySoil(map,10);
     map = addRockySoil(map);
     for(int i=0; i<2; i++){
-      map = processMap(map,"Rocky Soil","Savannah",2,8, false);
+      map = processMap(map,"Rocky Soil","Grassland",3,13, false);
+    }
+    //addSnow(map,10);
+    //map = addTaiga(map);
+    map = addTaiga(map);
+    for(int i=0; i<10; i++){
+      map = processMap(map,"Taiga","Forest",5,50, false);
     }
     
     map = addSnow(map);
-    for(int i=0; i<2; i++){
-      map = processMap(map,"Snow","Taiga",4,34, false);
+    for(int i=0; i<10; i++){
+      map = processMap(map,"Snow","Taiga",5,50, false);
     }
     
-    //addRockySoil(map,10);
-    /*map = addRockySoil(map);
+    map = addGrassland(map);
     for(int i=0; i<2; i++){
-      map = processMap(map,"Rocky Soil","Forest",4,22, false);
-    }*/
-    //addSnow(map,10);
-    //map = addTaiga(map);
-    /*map = addTaiga(map);
-    for(int i=0; i<10; i++){
-      map = processMap(map,"Taiga","Forest",8,110, false);
-    }*/
-    
-    /*map = addSnow(map);
-    for(int i=0; i<10; i++){
-      map = processMap(map,"Snow","Taiga",8,110, false);
-    }*/
-    
+      map = processMap(map,"Forest","Grassland",3,13, false);
+    }
     
     //addSleet(map,10);
+    map = addSleet(map);
+    for(int i=0; i<2; i++){
+      map = processMap(map,"Sleet","Shallow Water",3,13, false);
+    }
     
     //addTemperature(map);
     
@@ -692,6 +663,7 @@ public void randomMap() {
   }
   
   else if(step == 5) {
+
     
     //Once the biomes are set, we create objects that spawn in them
     //For this, we use chance percentage out of the specified number(Mostly out of 200)
@@ -736,42 +708,54 @@ public void randomMap() {
           }
         }
         
-        //Rocky Soil
-        if (map[x][y].getBiome().equals("Rocky Soil")) {
-          int chance = round(random(200));
-          if (chance <=6) {
-            map[x][y].setObject("Small Stone");
-          }
-          if (chance >=7&&chance<=10) {
-            map[x][y].setObject("Big Stone");
-          }
-        }
-        
         //Beach
         if (map[x][y].getBiome().equals("Beach")) {
-          int chance = round(random(200));
+          int chance = round(random(300));
           if (chance <=2) {
             map[x][y].setObject("Small Stone");
           }
-          if (chance >=3&&chance<=4) {
+          if (chance >=3&&chance<=5) {
             map[x][y].setObject("Starfish");
           }
-          if (chance == 4) {
-            map[x][y].setObject("Starfish");
-          }
-          if (chance == 5) {
+          if (chance >=6 && chance <= 8) {
             map[x][y].setObject("Shell");
+          }
+          if (chance >=9 && chance <= 10) {
+            map[x][y].setObject("Tree");
+          }
+          if (chance ==11) {
+            map[x][y].setObject("Wooden Log");
           }
         }
         
         //Savanah
         if (map[x][y].getBiome().equals("Savannah")) {
-          int chance = round(random(200));
+          int chance = round(random(400));
           if (chance <=10) {
             map[x][y].setObject("Long Grass");
           }
           if (chance >=11&&chance<=12) {
             map[x][y].setObject("Small Stone");
+          }
+          if (chance ==13) {
+            map[x][y].setObject("Big Stone");
+          }
+          if (chance >=14 && chance <= 18) {
+            map[x][y].setObject("Long Grass");
+          }
+        }
+        
+        //Rocky Soil
+        if (map[x][y].getBiome().equals("Rocky Soil")) {
+          int chance = round(random(300));
+          if (chance <= 5) {
+            map[x][y].setObject("Small Stone");
+          }
+          if (chance >=6 && chance <= 9) {
+            map[x][y].setObject("Big Stone");
+          }
+          if (chance >=10 && chance <= 13) {
+            map[x][y].setObject("Long Grass");
           }
         }
         
@@ -786,6 +770,17 @@ public void randomMap() {
           }
         }
         
+        //Snow
+        if (map[x][y].getBiome().equals("Sleet")) {
+          int chance = round(random(300));
+          if (chance <=6) {
+            map[x][y].setObject("Ice Shard");
+          }
+          if (chance ==7) {
+            map[x][y].setObject("Crystal");
+          }
+        }
+        
         //Taiga
         if (map[x][y].getBiome().equals("Taiga")) {
           int chance = round(random(200));
@@ -794,8 +789,20 @@ public void randomMap() {
           }
         }
         
+        //Shallow Water
+        if (map[x][y].getBiome().equals("Shallow Water")) {
+          int chance = round(random(400));
+          if (chance <=10) {
+            map[x][y].setObject("Tree");
+          }
+          if (chance == 11) {
+            map[x][y].setObject("Wooden Log");
+          }
+        }
+        
       }
     }
+    
     step++;
     
   }
@@ -837,7 +844,7 @@ public void randomMap() {
 }
 
 //Display/update the In-Game Console(Dark Bar on the bottom of the screen)
-public void displayConsole() {
+void displayConsole() {
   
   //Draw the background of the In-Game Console
   stroke(0);
@@ -860,7 +867,7 @@ public void displayConsole() {
   
 }
 
-public Tile[][] processMap(Tile[][] oldMap, String landType1, String landType2,int countNeighbourSize, int nbsLimit, boolean allTiles){
+Tile[][] processMap(Tile[][] oldMap, String landType1, String landType2,int countNeighbourSize, int nbsLimit, boolean allTiles){
   Tile[][] newMap = new Tile[cols][rows];
   
   for (int x = 0; x < cols; x++) {
@@ -898,7 +905,7 @@ public Tile[][] processMap(Tile[][] oldMap, String landType1, String landType2,i
 }
 
 //Returns the number of tiles in a ring around (x,y) that are of the passed biome.
-public int countNeighbours(Tile[][] map, String biome, int x, int y, int countBy){
+int countNeighbours(Tile[][] map, String biome, int x, int y, int countBy){
   int count = 0;
   for(int i=-countBy; i<=countBy; i++){
     for(int j=-countBy; j<=countBy; j++){
@@ -921,14 +928,14 @@ public int countNeighbours(Tile[][] map, String biome, int x, int y, int countBy
   return count;
 }
 
-public Tile[][] addWater(Tile[][] oldMap) {
+Tile[][] addWater(Tile[][] oldMap) {
   
   Tile[][] newMap = oldMap;
   
   for(int x=0; x<cols; x++){
     for(int y=0; y<rows; y++){
       if(oldMap[x][y].getBiome().equals("Deep Water")) {
-        int nbs = countNeighbours(oldMap, "Grassland", x, y, PApplet.parseInt(random(2,10)));
+        int nbs = countNeighbours(oldMap, "Grassland", x, y, int(random(2,10)));
         if(nbs>1)
           newMap[x][y].setBiome("Shallow Water");
       }
@@ -956,7 +963,48 @@ public Tile[][] addWater(Tile[][] oldMap) {
   return newMap;
 }
 
-public Tile[][] addForests(Tile[][] oldMap){
+Tile[][] addGrassland(Tile[][] oldMap){
+  Tile[][] newMap = new Tile[cols][rows];
+  
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < rows; y++) {
+      newMap[x][y] = oldMap[x][y];
+    }
+  }
+  
+  //Loop over each row and column of the map
+  for(int x=0; x<cols; x++){
+    for(int y=0; y<rows; y++){
+      int nbs = countNeighbours(oldMap, "Grassland", x, y, 10);
+      //The new value is based on our simulation rules
+      //First, if a cell is alive but has too few neighbours, kill it.
+        if(oldMap[x][y].getBiome().equals("Grassland")){
+          if(nbs >50){
+            newMap[x][y].setBiome("Forest");
+          }
+        }
+    }
+  }
+  //growBiome(newMap,10,"Grassland");
+  
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < rows; y++) {
+      if(newMap[x][y].getBiome().equals("Forest")) {
+      
+        //initialize that specific Tile object as either a "Shallow Water" tile or as a "Grassland" tile
+        int random = round(random(100));
+      
+        if(random < 76) {
+          newMap[x][y].setBiome("Grassland");
+        }
+      
+      }
+    }
+  }
+  return newMap;
+}
+
+Tile[][] addForests(Tile[][] oldMap){
   Tile[][] newMap = new Tile[cols][rows];
   
   for (int x = 0; x < cols; x++) {
@@ -997,7 +1045,7 @@ public Tile[][] addForests(Tile[][] oldMap){
   return newMap;
 }
 
-public Tile[][] addSavannahs(Tile[][] oldMap){
+Tile[][] addSavannahs(Tile[][] oldMap){
   Tile[][] newMap = new Tile[cols][rows];
   
   for (int x = 0; x < cols; x++) {
@@ -1038,48 +1086,7 @@ public Tile[][] addSavannahs(Tile[][] oldMap){
   return newMap;
 }
 
-public Tile[][] addRockySoil(Tile[][] oldMap){
-  Tile[][] newMap = new Tile[cols][rows];
-  
-  for (int x = 0; x < cols; x++) {
-    for (int y = 0; y < rows; y++) {
-      newMap[x][y] = oldMap[x][y];
-    }
-  }
-  
-  //Loop over each row and column of the map
-  for(int x=0; x<cols; x++){
-    for(int y=0; y<rows; y++){
-      int nbs = countNeighbours(oldMap, "Savannah", x, y, 10);
-      //The new value is based on our simulation rules
-      //First, if a cell is alive but has too few neighbours, kill it.
-        if(oldMap[x][y].getBiome().equals("Savannah")){
-          if(nbs >50){
-            newMap[x][y].setBiome("Rocky Soil");
-          }
-        }
-    }
-  }
-  //growBiome(newMap,10,"Grassland");
-  
-  for (int x = 0; x < cols; x++) {
-    for (int y = 0; y < rows; y++) {
-      if(newMap[x][y].getBiome().equals("Rocky Soil")) {
-      
-        //initialize that specific Tile object as either a "Shallow Water" tile or as a "Grassland" tile
-        int random = round(random(100));
-      
-        if(random < 76) {
-          newMap[x][y].setBiome("Savannah");
-        }
-      
-      }
-    }
-  }
-  return newMap;
-}
-
-public Tile[][] addTaiga(Tile[][] oldMap){
+Tile[][] addRockySoil(Tile[][] oldMap){
   Tile[][] newMap = new Tile[cols][rows];
   
   for (int x = 0; x < cols; x++) {
@@ -1096,6 +1103,47 @@ public Tile[][] addTaiga(Tile[][] oldMap){
       //First, if a cell is alive but has too few neighbours, kill it.
         if(oldMap[x][y].getBiome().equals("Grassland")){
           if(nbs >50){
+            newMap[x][y].setBiome("Rocky Soil");
+          }
+        }
+    }
+  }
+  //growBiome(newMap,10,"Grassland");
+  
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < rows; y++) {
+      if(newMap[x][y].getBiome().equals("Rocky Soil")) {
+      
+        //initialize that specific Tile object as either a "Shallow Water" tile or as a "Grassland" tile
+        int random = round(random(100));
+      
+        if(random < 76) {
+          newMap[x][y].setBiome("Grassland");
+        }
+      
+      }
+    }
+  }
+  return newMap;
+}
+
+Tile[][] addTaiga(Tile[][] oldMap){
+  Tile[][] newMap = new Tile[cols][rows];
+  
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < rows; y++) {
+      newMap[x][y] = oldMap[x][y];
+    }
+  }
+  
+  //Loop over each row and column of the map
+  for(int x=0; x<cols; x++){
+    for(int y=0; y<rows; y++){
+      int nbs = countNeighbours(oldMap, "Forest", x, y, 10);
+      //The new value is based on our simulation rules
+      //First, if a cell is alive but has too few neighbours, kill it.
+        if(oldMap[x][y].getBiome().equals("Forest")){
+          if(nbs >50){
             newMap[x][y].setBiome("Taiga");
           }
         }
@@ -1111,7 +1159,7 @@ public Tile[][] addTaiga(Tile[][] oldMap){
         int random = round(random(100));
       
         if(random < 35) {
-          newMap[x][y].setBiome("Grassland");
+          newMap[x][y].setBiome("Forest");
         }
       
       }
@@ -1120,7 +1168,7 @@ public Tile[][] addTaiga(Tile[][] oldMap){
   return newMap;
 }
 
-public Tile[][] addSnow(Tile[][] oldMap){
+Tile[][] addSnow(Tile[][] oldMap){
   Tile[][] newMap = new Tile[cols][rows];
   
   for (int x = 0; x < cols; x++) {
@@ -1161,7 +1209,54 @@ public Tile[][] addSnow(Tile[][] oldMap){
   return newMap;
 }
 
-public int growBiome(Tile[][] oldMap, int numberOfRuns, String biome) {
+Tile[][] addSleet(Tile[][] oldMap){
+  Tile[][] newMap = new Tile[cols][rows];
+  
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < rows; y++) {
+      newMap[x][y] = oldMap[x][y];
+    }
+  }
+  
+  //Loop over each row and column of the map
+  for(int x=0; x<cols; x++){
+    for(int y=0; y<rows; y++){
+      int nbs = countNeighbours(oldMap, "Snow", x, y, 10);
+      //The new value is based on our simulation rules
+      //First, if a cell is alive but has too few neighbours, kill it.
+        if(oldMap[x][y].getBiome().equals("Shallow Water")){
+          if(nbs >50){
+            newMap[x][y].setBiome("Sleet");
+          }
+        }
+        nbs = countNeighbours(oldMap, "Taiga", x, y, 10);
+        if(oldMap[x][y].getBiome().equals("Shallow Water")){
+          if(nbs >50){
+            newMap[x][y].setBiome("Sleet");
+          }
+        }
+    }
+  }
+  //growBiome(newMap,10,"Grassland");
+  
+  for (int x = 0; x < cols; x++) {
+    for (int y = 0; y < rows; y++) {
+      if(newMap[x][y].getBiome().equals("Sleet")) {
+      
+        //initialize that specific Tile object as either a "Shallow Water" tile or as a "Grassland" tile
+        int random = round(random(100));
+      
+        if(random < 50) {
+          newMap[x][y].setBiome("Shallow Water");
+        }
+      
+      }
+    }
+  }
+  return newMap;
+}
+
+int growBiome(Tile[][] oldMap, int numberOfRuns, String biome) {
   
   Tile[][] newMap = new Tile[cols][rows];
   
@@ -1236,7 +1331,7 @@ public int growBiome(Tile[][] oldMap, int numberOfRuns, String biome) {
   
 }
 
-public Tile[][] addTemperature(Tile[][] oldMap){
+Tile[][] addTemperature(Tile[][] oldMap){
   Tile[][] newMap = new Tile[cols][rows];
   
   for (int x = 0; x < cols; x++) {
@@ -1256,532 +1351,4 @@ public Tile[][] addTemperature(Tile[][] oldMap){
   growBiome(map,random,"Savannah");
   
   return newMap;
-}
-class Tile {
-  
-  //For information on Classes, please visit: http://www.wideskills.com/java-tutorial/java-classes-and-objects
-  
-  //Define the class variables
-  float x,y,w,h;
-  String biome, object, resource;
-  boolean walkable, leader, searched; 
-  boolean pickupable, isResource;
-  
-  //We then define the constructer
-  Tile(float tempX, float tempY, float tempW, float tempH, String tempBiome, String tempObject) {
-    x = tempX; //Tile x Location
-    y = tempY; //Tile y Location
-    w = tempW; //Tile width
-    h = tempH; //Tile height
-    biome = tempBiome; //Tile Biome
-    object = tempObject; //Tile Object
-    leader = false; //Whether it's a Biome Leader
-    setWalkable(); //Whether the Tile's Biome is walkable
-    setPickupable(); //Whether the Tile's object is pickupable
-    setIsResource(); //Whether the Tile's object is an item that can be picked up by itself(self contained object)
-    setResource(); //The object that is given when an object with isResource is false
-  }
-  
-  //Draw the tile
-  public void display() {
-    
-    //Set the drawing settings
-    if(mapOpened)
-      noStroke();
-    else {
-      strokeWeight(1);
-      stroke(0,0,0,64);
-    }
-    
-    //Determine what biome to draw
-    
-    if( biome.equals("None")) {
-      fill(75,45,60);
-    }
-    if( biome.equals("Grassland")) {
-      fill(180,240,180);
-    }
-    if( biome.equals("Shallow Water")) {
-      fill(125,135,255);
-    }
-    if( biome.equals("Deep Water")) {
-      fill(105,115,235);
-    }
-    if( biome.equals("Forest")) {
-      fill(110,200,130);
-    }
-    if( biome.equals("Mangrove")) {
-      fill(125,175,230);
-    }
-    if( biome.equals("Beach")) {
-      fill(255,255,220);
-    }
-    if( biome.equals("Rocky Soil")) {
-      fill(225,200,185);
-    }
-    if( biome.equals("Savannah")) {
-      fill(255,240,200);
-    }
-    if( biome.equals("Snow")) {
-      fill(245,250,255);
-    }
-    if( biome.equals("Taiga")) {
-      fill(215,255,215);
-    }
-    if( biome.equals("Sleet")) {
-      fill(195,235,255);
-    }
-    
-    //Draws a square of the biome's color
-    rect(x,y,w,h);
-    
-    //Then we draw the object on the tile
-    
-    //The player is an object itself
-    if(object.equals("Player")) {
-      fill(20,20,20);
-      ellipse(x+w/2,y+h/2,w/4*3,h/4*3);
-    }
-    
-    //Trees change color depending on their biome
-    if(object.equals("Tree")) {
-      if(biome.equals("Snow")||biome.equals("Taiga")) {
-        fill(195,255,210);
-        ellipse(x+w/2,y+w/2,w/2,h/2);
-        noStroke();
-        fill(195,130,185);
-        ellipse(x+w/2,y+w/2,w/4,h/4);
-      }
-      else if(biome.equals("Mangrove")) {
-        fill(130,255,165);
-        ellipse(x+w/2,y+w/2,w/2,h/2);
-        noStroke();
-        fill(195,130,185);
-        ellipse(x+w/2,y+w/2,w/4,h/4);
-      }
-      else {
-        fill(125,200,110);
-        ellipse(x+w/2,y+w/2,w/2,h/2);
-        noStroke();
-        fill(160,85,110);
-        ellipse(x+w/2,y+w/2,w/4,h/4);
-      }
-    }
-    if(object.equals("Small Stone")) {
-      fill(230,230,255);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    if(object.equals("Big Stone")) {
-      fill(230,230,255);
-      ellipse(x+w/2,y+w/2,w,h);
-    }
-    if(object.equals("Tree Branch")) {
-      fill(175,150,75);
-      rect(x+w/4,y+h/4+h/8,w-w/2,h-h/2-h/8*2);
-    }
-    if(object.equals("Berry Bush")) {
-      fill(20,150,100);
-      ellipse(x+w/2,y+h/2,w/4*3,h/4*3);
-    }
-    if(object.equals("Berry")) {
-      fill(255,20,255);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    if(object.equals("Starfish")) {
-      fill(255,10,35);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    if(object.equals("Shell")) {
-      fill(185,150,255);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    if(object.equals("Long Grass")) {
-      fill(255,200,180);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    if(object.equals("Ice Shard")) {
-      fill(150,185,255);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    if(object.equals("Crystal")) {
-      fill(45,75,255);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    
-    //interactDictionary() objects
-    
-    if(object.equals("Unfinished Stone Axe")) {
-      fill(100,100,135);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    if(object.equals("Stone Axe")) {
-      fill(255,185,160);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    if(object.equals("Wooden Log")) {
-      fill(255,185,160);
-      rect(x,y+h/4,w,h/2);
-    }
-    if(object.equals("Wooden Wall")) {
-      fill(220,175,145);
-      rect(x,y,w,h);
-    }
-    if(object.equals("Pile of Wooden Logs")) {
-      fill(200,155,125);
-      rect(x,y+h/4,w,h/2);
-      fill(255,185,160);
-      rect(x+w/4,y,w/2,h);
-    }
-    if(object.equals("Pile of Stone")) {
-      fill(125,125,165);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-    if(object.equals("Camp Fire")) {
-      fill(255,80,20);
-      ellipse(x+w/2,y+w/2,w/2,h/2);
-    }
-  }
-  
-  //Define the setters and getters
-  public void setX(float tempX) {
-    x = tempX;
-  }
-  
-  public void setY(float tempY) {
-    y = tempY;
-  }
-  
-  public void setWidth(float tempW) {
-    w = tempW;
-  }
-  
-  public void setHeight(float tempH) {
-    h = tempH;
-  }
-  
-  public void setBiome(String tempBiome) {
-    biome = tempBiome;
-    setWalkable();
-  }
-  
-  public void setObject(String tempObject) {
-    object = tempObject;
-    setPickupable();
-    setIsResource();
-    setResource();
-  }
-  
-  public void setLeader(boolean tempLeader) {
-    leader = tempLeader;
-  }
-  
-  public void setSearched(boolean tempSearched) {
-    searched = tempSearched;
-  }
-  
-  public void setWalkable() {
-    if(biome.equals("Grassland"))
-      walkable = true;
-    if(biome.equals("Shallow Water"))
-      walkable = true;
-    if(biome.equals("Deep Water"))
-      walkable = false;
-    if(biome.equals("Forest"))
-      walkable = true;
-    if(biome.equals("Mangrove"))
-      walkable = true;
-    if(biome.equals("Beach"))
-      walkable = true;
-    if(biome.equals("Rocky Soil"))
-      walkable = true;
-    if(biome.equals("Savannah"))
-      walkable = true;
-    if(biome.equals("Snow"))
-      walkable = true;
-    if(biome.equals("Taiga"))
-      walkable = true;
-    if(biome.equals("Iceland"))
-      walkable = true;
-  }
-  
-  public void setPickupable() {
-    if(object.equals("Small Stone")) {
-      pickupable = true;
-    }
-    if(object.equals("Big Stone")) {
-      pickupable = false;
-    }
-    if(object.equals("Tree")) {
-      pickupable = true;
-    }
-    if(object.equals("Tree Branch")) {
-      pickupable = true;
-    }
-    if(object.equals("Berry Bush")) {
-      pickupable = true;
-    }
-    if(object.equals("Berry")) {
-      pickupable = true;
-    }
-    if(object.equals("Pile of Tree Branches")) {
-      pickupable = true;
-    }
-    if(object.equals("Starfish")) {
-      pickupable = true;
-    }
-    if(object.equals("Shell")) {
-      pickupable = true;
-    }
-    if(object.equals("Long Grass")) {
-      pickupable = true;
-    }
-    if(object.equals("Ice Shard")) {
-      pickupable = true;
-    }
-    if(object.equals("Crystal")) {
-      pickupable = true;
-    }
-    
-    //interactDictionary() objects
-    
-    if(object.equals("Unfinished Stone Axe")) {
-      pickupable = true;
-    }
-    if(object.equals("Stone Axe")) {
-      pickupable = true;
-    }
-    if(object.equals("Wooden Log")) {
-      pickupable = true;
-    }
-    if(object.equals("Pile of Wooden Logs")) {
-      pickupable = true;
-    }
-    if(object.equals("Wooden Wall")) {
-      pickupable = false;
-    }
-    if(object.equals("Pile of Stone")) {
-      pickupable = true;
-    }
-    if(object.equals("Camp Fire")) {
-      pickupable = false;
-    }
-    
-    if(object.equals("None")) {
-      pickupable = false;
-    }
-  }
-  
-  public void setIsResource() {
-    if(object.equals("Small Stone")) {
-      isResource = true;
-    }
-    if(object.equals("Big Stone")) {
-      isResource = true;
-    }
-    if(object.equals("Tree")) {
-      isResource = false;
-    }
-    if(object.equals("Tree Branch")) {
-      isResource = true;
-    }
-    if(object.equals("Berry Bush")) {
-      isResource = false;
-    }
-    if(object.equals("Berry")) {
-      isResource = true;
-    }
-    if(object.equals("Starfish")) {
-      isResource = true;
-    }
-    if(object.equals("Shell")) {
-      isResource = true;
-    }
-    if(object.equals("Long Grass")) {
-      isResource = true;
-    }
-    if(object.equals("Ice Shard")) {
-      isResource = true;
-    }
-    if(object.equals("Crystal")) {
-      isResource = true;
-    }
-    
-    //interactionDictionary() objects
-    
-    if(object.equals("Unfinished Stone Axe")) {
-      isResource = true;
-    }
-    if(object.equals("Stone Axe")) {
-      isResource = true;
-    }
-    if(object.equals("Wooden Log")) {
-      isResource = true;
-    }
-    if(object.equals("Pile of Wooden Logs")) {
-      isResource = true;
-    }
-    if(object.equals("Pile of Stone")) {
-      isResource = true;
-    }
-    if(object.equals("Camp Fire")) {
-      isResource = true;
-    }
-    
-    if(object.equals("None")) {
-      isResource = false;
-    }
-  }
-  
-  public void setResource() {
-    if(object.equals("Tree")) {
-      resource = "Tree Branch";
-    }
-    if(object.equals("Berry Bush")) {
-      resource = "Berry";
-    }
-    if(object.equals("None")) {
-      resource = "None";
-    }
-  }
-  
-  public float getX() {
-    return x;
-  }
-  
-  public float getY() {
-    return y;
-  }
-  
-  public float getWidth() {
-    return w;
-  }
-  
-  public float getHeight() {
-    return h;
-  }
-  
-  public String getBiome() {
-    return biome;
-  }
-  
-  public String getObject() {
-    return object;
-  }
-  
-  public boolean getLeader() {
-    return leader;
-  }
-  
-  public boolean getSearched() {
-    return searched;
-  }
-  
-  public boolean getWalkable() {
-    return walkable;
-  }
-  
-  public boolean getPickupable() {
-      return pickupable;
-  }
-  
-  public boolean getIsResource() {
-      return isResource;
-  }
-  
-  public String getResource() {
-      return resource;
-  }
-  
-  //Used to handle all object on object interactions
-  public void interactDictionary() {
-    
-    //Unfinished Stone Axe
-    if(playerInventory.equals("Small Stone")&&object.equals("Tree Branch")||
-       playerInventory.equals("Tree Branch")&&object.equals("Small Stone")) {
-         playerInventory = "None";
-         object = "Unfinished Stone Axe";
-         setPickupable();
-         setIsResource();
-         setResource();
-         playerLog = "You started making a Stone Axe. You need something to tie the pieces together";
-       }
-       
-    //Stone Axe
-    else if(playerInventory.equals("Unfinished Stone Axe")&&object.equals("Long Grass")||
-       playerInventory.equals("Long Grass")&&object.equals("Unfinished Stone Axe")) {
-         playerInventory = "None";
-         object = "Stone Axe";
-         setPickupable();
-         setIsResource();
-         setResource();
-         playerLog = "You made a Stone Axe";
-       }
-       
-    //Wooden Log
-    else if(playerInventory.equals("Stone Axe")&&object.equals("Tree")){
-         playerInventory = "Stone Axe";
-         object = "Wooden Log";
-         setPickupable();
-         setIsResource();
-         setResource();
-         playerLog = "You chopped the tree into a Wooden Log";
-       }
-       
-    //Pile of Wooden Logs
-    else if(playerInventory.equals("Wooden Log")&&object.equals("Wooden Log")||
-            playerInventory.equals("Stone Axe")&&object.equals("Wooden Wall")){
-         playerInventory = "None";
-         object = "Pile of Wooden Logs";
-         setPickupable();
-         setIsResource();
-         setResource();
-         playerLog = "You made a Pile of Wooden Logs";
-       }
-       
-    //Wooden Wall
-    else if(playerInventory.equals("Stone Axe")&&object.equals("Pile of Wooden Logs")){
-         playerInventory = "Stone Axe";
-         object = "Wooden Wall";
-         setPickupable();
-         setIsResource();
-         setResource();
-         playerLog = "You made a Wooden Wall. Use the Stone Axe again to bring it down";
-       }
-       
-    //Pile of Stone
-    else if(playerInventory.equals("Small Stone")&&object.equals("Small Stone")) {
-         playerInventory = "None";
-         object = "Pile of Stone";
-         setPickupable();
-         setIsResource();
-         setResource();
-         playerLog = "You made a Pile of Stone. Add some wood to start a Camp Fire";
-       }
-       
-    //Camp Fire
-    else if(playerInventory.equals("Tree Branch")&&object.equals("Pile of Stone")||
-            playerInventory.equals("Wooden Log")&&object.equals("Pile of Stone")) {
-         playerInventory = "None";
-         object = "Camp Fire";
-         setPickupable();
-         setIsResource();
-         setResource();
-         playerLog = "You made a Camp Fire";
-       }
-       
-    else {
-             playerLog = "You can't use a "+playerInventory+" on "+object;
-       }
-    
-  }
-  
-}
-  static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "Delta_Wolf_Project" };
-    if (passedArgs != null) {
-      PApplet.main(concat(appletArgs, passedArgs));
-    } else {
-      PApplet.main(appletArgs);
-    }
-  }
 }
